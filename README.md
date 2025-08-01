@@ -14,16 +14,25 @@ A simple yet powerful Sentiment Analysis Web App built with Streamlit that predi
 
 # Tech Stack
 Programming	Language - Python 3.x
-Data Handling -	numpy, pandas
+
+Data Handling -	numpy , pandas
+
 For NLP tasks -	nltk
+
 ML model building -scikit-learn
+
 Model I/O	- pickle
+
 Web App	Streamlit
 
 # How It Works
+
 1.User inputs a sentence via the web interface.
+
 2.Text is cleaned and vectorized using preloaded CountVectorizer or TfidfVectorizer.
+
 3.Trained Naive Bayes model classifies the sentiment.
+
 4.App displays if the sentiment is Positive or Negative.
 
 # License
