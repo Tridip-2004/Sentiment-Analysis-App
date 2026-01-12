@@ -1,6 +1,9 @@
 # Sentiment-Analysis-App
 A simple yet powerful Sentiment Analysis Web App built with Streamlit that predicts whether a sentence expresses a positive or negative sentiment using Machine Learning. The backend model is trained using sklearn, and NLP tasks are handled using nltk, while numpy and pandas support data operations. The trained model is saved using pickle for fast and efficient loading.
 
+# Demo
+C:\Users\tridi\Videos\Captures\Streamlit - Personal - Microsoft​ Edge 2025-07-11 12-14-24.mp4
+
 # Features
 📝 Predicts sentiment of input sentence (Positive / Negative)
 
