@@ -1,49 +1,40 @@
 import streamlit as st
-import pickle
-import string
-import nltk
-from nltk.corpus import stopwords
-import numpy as np
+import joblib
+import re
 
-# Load Model & Vectorizer
-model = pickle.load(open('sentiment_model.pkl', 'rb'))
-vectorizer = pickle.load(open('tfidf_vectorizer.pkl', 'rb'))
+st.set_page_config(page_title="Sentiment Predictor", page_icon="🧠")
 
-# Download stopwords (only once)
-nltk.download('stopwords')
-stop_words = set(stopwords.words('english'))
-punctuations = set(string.punctuation)
+st.title("🧠 Sentiment Predictor")
+st.write("Predict whether a sentence is **Positive** or **Negative**.")
 
-# Preprocessing function (no `re` used)
-def clean_text(text):
+# Load model
+@st.cache_resource
+def load_model():
+    return joblib.load("sentiment_model_v2.joblib")
+
+def preprocess(text):
     text = text.lower()
-    words = text.split()
-    cleaned = []
-    for word in words:
-        word = word.strip(''.join(punctuations))
-        if word.isalpha() and word not in stop_words:
-            cleaned.append(word)
-    return ' '.join(cleaned)
+    text = re.sub(r"http\S+|[^a-z\s]", " ", text)
+    return " ".join(text.split())
 
-# Streamlit UI
-st.title(" Sentiment Analysis App")
-st.write("Enter a sentence and check whether it's Positive or Negative.")
+try:
+    model = load_model()
 
-user_input = st.text_area("Enter Text Below:")
+    text = st.text_area("Enter a sentence:", placeholder="e.g. I love this product!")
 
-if st.button("Predict"):
-    if user_input.strip() == "":
-        st.warning("⚠️ Please enter some text.")
-    else:
-        cleaned = clean_text(user_input)
-        vec = vectorizer.transform([cleaned])
-        prediction = model.predict(vec)[0]
-        if prediction == 1:
-            st.success(f"🙂 Positive Sentiment ")
+    if st.button("Predict"):
+        if text.strip():
+            clean = preprocess(text)
+            pred  = model.predict([clean])[0]
+            proba = model.predict_proba([clean])[0]
+            conf  = max(proba) * 100
+
+            if pred == 1:
+                st.success(f"✅ **POSITIVE** — {conf:.1f}% confidence")
+            else:
+                st.error(f"❌ **NEGATIVE** — {conf:.1f}% confidence")
         else:
-            st.error(f"🙁Negative Sentiment ")
+            st.warning("Please enter a sentence.")
 
-
-
-st.markdown("---")
-st.caption("Built using Scikit-learn & Streamlit")
+except FileNotFoundError:
+    st.error("⚠️ `sentiment_model.joblib` not found. Place it in the same folder and restart.")
